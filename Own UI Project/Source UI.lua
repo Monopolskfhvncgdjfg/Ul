@@ -6,6 +6,7 @@ function UILib:CreateWindow(windowName, tag)
 
 	local ScreenGui = Instance.new("ScreenGui")
 	ScreenGui.Name = "AxalUILib"
+	ScreenGui.ResetOnSpawn = false
 	ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 
 	local Frame = Instance.new("Frame")
@@ -78,7 +79,7 @@ function UILib:CreateTab(name)
 	button.TextColor3 = Color3.fromRGB(255, 255, 255)
 	button.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 	button.BorderSizePixel = 0
-	button.Parent = self.MainFrame:FindFirstChildOfClass("Frame") -- top bar
+	button.Parent = self.MainFrame:FindFirstChildOfClass("Frame")
 
 	button.MouseButton1Click:Connect(function()
 		for _, t in pairs(self.Tabs) do t.Visible = false end
@@ -96,16 +97,37 @@ function UILib:CreateTab(name)
 end
 
 function UILib:CreateButton(parentTab, text, callback)
+	local padding = 10
+	local spacing = 40
+	local btnCount = 0
+
+	for _, child in ipairs(parentTab:GetChildren()) do
+		if child:IsA("TextButton") then
+			btnCount += 1
+		end
+	end
+
 	local button = Instance.new("TextButton")
-	button.Size = UDim2.new(0, 200, 0, 30)
-	button.Position = UDim2.new(0, 20, 0, #parentTab:GetChildren() * 35)
+	button.Size = UDim2.new(0, 250, 0, 32)
+	button.Position = UDim2.new(0, padding, 0, padding + (btnCount * spacing))
 	button.Text = text
-	button.Font = Enum.Font.SourceSans
+	button.Font = Enum.Font.Gotham
 	button.TextSize = 14
-	button.TextColor3 = Color3.fromRGB(255, 255, 255)
-	button.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-	button.BorderSizePixel = 0
+	button.TextColor3 = Color3.fromRGB(220, 220, 220)
+	button.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+	button.BorderColor3 = Color3.fromRGB(20, 20, 20)
+	button.BorderSizePixel = 1
+	button.AutoButtonColor = false
 	button.Parent = parentTab
+
+	-- Hover effect
+	button.MouseEnter:Connect(function()
+		button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+	end)
+
+	button.MouseLeave:Connect(function()
+		button.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+	end)
 
 	button.MouseButton1Click:Connect(function()
 		if callback then
